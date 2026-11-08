@@ -49,8 +49,14 @@ def decrypt():
     openssl('pkeyutl','-decrypt','-inkey',ROOT/'private.pem','-pkeyopt','rsa_padding_mode:oaep','-in',ROOT/'rsa_message.enc','-out',ROOT/'rsa_message.dec')
     print('RSA decryption successful: recovered digest saved as rsa_message.dec')
     if (ROOT/'grades.txt').exists() and (ROOT/'rsa_message.dec').read_bytes()==openssl('dgst','-sha256','-binary',ROOT/'grades.txt'):
-        print('Recovered digest matches the grade report: VERIFIED')
-    else: print('Recovered digest does not match the current grade report.')
+        print('Recovered SHA-256 digest matches the grade report: VERIFIED')
+        print('\n========== VERIFIED GRADE REPORT ==========')
+        print((ROOT/'grades.txt').read_text(encoding='utf-8', errors='replace').rstrip())
+        print('===========================================')
+        print('Note: This is the original report whose digest was verified; RSA decrypted the digest, not the report text.')
+        print('CHALLENGE 2 COMPLETED!')
+    else:
+        print('Recovered digest does not match the current grade report. Report contents will not be displayed.')
 
 def sign():
     data=load();prompt_code('Private',data)
